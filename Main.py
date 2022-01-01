@@ -54,10 +54,10 @@ def menu_strategies():
                 menu_main_functionality('UNIFORM')
             elif user_option == 3:
                 print("A* ALGORITHM")
-                menu_main_functionality('GREEDY')
+                menu_main_functionality('A')
             elif user_option == 4:
                 print("GREEDY ALGORITHM")
-                menu_main_functionality('A*')
+                menu_main_functionality('GREEDY')
             elif user_option==5:
                 print("Bye!")
                 break  
@@ -67,7 +67,7 @@ def menu_strategies():
         
 
 def menu_main_functionality(strategy):
-    path_json="/home/adrian/Escritorio/intelligent-system/json_files/p0.json"###########
+    path_json="/home/adrian/Escritorio/intelligent-system/json_files/p1.json"###########
     problem = Problem(0, [], State([]))
 
     problem = read_States_Txt(path_json, 1)#############

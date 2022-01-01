@@ -3,7 +3,6 @@
 from classes.Bottle import *
 import copy
 
-
 class State(): 
     def __init__(self, list_bottles = None):
         self.bottles = list_bottles
@@ -16,7 +15,7 @@ class State():
             return False
         if (destBottle.current_amount == 0) and destBottle.isPossible_to_add_quantity(originBottle) == True:
             return True
-        if (destBottle.getColourLast() == originBottle.getColourLast()) and originBottle.isPossible_to_add_quantity(destBottle) == True:
+        if (destBottle.getColourLast() == originBottle.getColourLast()) and destBottle.isPossible_to_add_quantity(originBottle) == True:
             return True
         return False
 
@@ -33,7 +32,7 @@ class State():
         for origin in range(len(bottle_list)):
             for destination in range(len(bottle_list)):
                 if (origin != destination) and self.is_Possible_Action(bottle_list[origin], bottle_list[destination]):
-                    quantity = bottle_list[destination].getQuantityLast()
+                    quantity = bottle_list[origin].getQuantityLast()
                     self.action(bottle_list[origin], bottle_list[destination])
                     successors_list.append([[origin, destination, quantity], State(bottle_list), 1])
                     bottle_list = self.createCopy(initState.bottles)
@@ -51,6 +50,4 @@ class State():
                 continue
             else:
                 return False
-        return True
-
-        
+        return True       

@@ -4,6 +4,7 @@ from classes.Frontier_Heapq import *
 import os
 from classes.Node import *
 from classes.State import *
+from hashlib import *
 
 class State_space():
     
@@ -22,8 +23,6 @@ class State_space():
             if len(self.frontier) == 0:
                 return None
             node = self.frontier.pop()
-            if node.ID == 9411:##############
-                print(f"{node.cost},{node.state},{node.ID_parent},{node.depth},{node.heuristic},{node.value}")#########3
             if node.state.isGoal() == True:
                 return node
             if self.belong(node.state) == False:
@@ -41,7 +40,7 @@ class State_space():
         value = self.valueStrategy(depth, cost, heuristic)
         node = Node(id, cost, state, id_parent, action, depth, heuristic, value)
         self.id += 1
-        self.nodes_created[f'{node.ID}'] = node
+        self.nodes_created[f'{id}'] = node
         return node
 
     def insert_all(self, successors_list_node):
@@ -74,8 +73,9 @@ class State_space():
             depth = node.depth + 1
             heuristic = self.calculateHeuristic(state)
             value = self.valueStrategy(depth, cost, heuristic)
-            successors_node_list.append(Node(id, cost, state, id_parent, action, depth, heuristic, value))
-            self.nodes_created[f'{node.ID}'] = node
+            node_aux = Node(id, cost, state, id_parent, action, depth, heuristic, value)
+            successors_node_list.append(node_aux)
+            self.nodes_created[f'{id}'] = node_aux
             self.id += 1
         return successors_node_list
 
@@ -88,7 +88,7 @@ class State_space():
             return cost
         elif self.strategy == 'GREEDY':
             return heuristic
-        elif self.strategy == 'A*':
+        elif self.strategy == 'A':
             return cost + heuristic
             
     def export(self, node_solution):
@@ -97,30 +97,32 @@ class State_space():
         while node_solution != None:
             id = node_solution.ID
             cost = node_solution.cost
-            state = node_solution.state
+
+            state = md5(f'{node_solution.state}'.encode()).hexdigest()
+
             id_parent = node_solution.ID_parent
             depth = node_solution.depth
-            heuristic = node_solution.heuristic
-            value = node_solution.value
+            heuristic = "{0:.2f}".format(node_solution.heuristic)
+            value = "{0:.2f}".format(node_solution.value)
             if node_solution.action is not None:
                 node_action_1 = node_solution.action[0]
                 node_action_2 = node_solution.action[1]
                 node_action_3 = node_solution.action[2]
-                string_solution = f"{string_solution}[{id}][{cost},{state},{id_parent},({node_action_1}, {node_action_2}, {node_action_3}),{depth},{heuristic},{value}]\n"
+                string_solution = f"[{id}][{cost},{state},{id_parent},({node_action_1}, {node_action_2}, {node_action_3}),{depth},{heuristic},{value}]\n{string_solution}"
             else:
                 node_action_1 = None
                 node_action_2 = None
                 node_action_3 = None
-                string_solution = f"{string_solution}[{id}][{cost},{state},{id_parent},{None},{depth},{heuristic},{value}]\n"
+                string_solution = f"[{id}][{cost},{state},{id_parent},{None},{depth},{heuristic},{value}]\n{string_solution}"
             
-            node_solution = self.nodes_created.get(node_solution.ID_parent)
-        with open(f'{os.getcwd()}/Solutions/{self.problem.id}_{self.strategy}.json', "w") as file:
+            node_solution = self.nodes_created.get(f"{id_parent}")
+        with open(f'{os.getcwd()}/Solutions/{self.problem.id}_{self.strategy}.txt', "w") as file:
             file.write(string_solution)
         print(f"Solution exported on the path: {os.getcwd()}/Solutions/{self.problem.id}_{self.strategy}.json")
 
     def calculateHeuristic(self, state):
         observed_types = []
-        h = 0.0
+        h = 0.00
         for i in range(len(state.bottles)):
             if len(state.bottles[i].liquids) == 0:
                 h += 1.0
@@ -130,4 +132,4 @@ class State_space():
                 else:
                     h += 1.0
                 h += len(state.bottles[i].liquids)
-        return h - len(state.bottles)
+        return h - len(self.problem.initState.bottles)
