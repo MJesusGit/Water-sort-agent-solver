@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 #-*-coding: utf-8; mode:python-*-
+from platform import node
 from classes.Frontier_Heapq import *
 import os
 from classes.Node import *
@@ -23,7 +24,9 @@ class State_space():
             if len(self.frontier) == 0:
                 return None
             node = self.frontier.pop()
-            if node.state.isGoal() == True:
+            if node.depth > self.problem.max_depth:
+                return 1
+            if node.state.isGoal(node.heuristic) == True:
                 return node
             if self.belong(node.state) == False:
                 self.visited.append(node.state)
@@ -93,12 +96,11 @@ class State_space():
             
     def export(self, node_solution):
         string_solution = ""
-
         while node_solution != None:
             id = node_solution.ID
             cost = node_solution.cost
 
-            state = md5(f'{node_solution.state}'.encode()).hexdigest()
+            state = md5(f'{str(node_solution.state)}'.encode()).hexdigest()
 
             id_parent = node_solution.ID_parent
             depth = node_solution.depth
@@ -132,4 +134,4 @@ class State_space():
                 else:
                     h += 1.0
                 h += len(state.bottles[i].liquids)
-        return h - len(self.problem.initState.bottles)
+        return h - len(state.bottles)

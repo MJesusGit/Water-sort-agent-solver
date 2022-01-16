@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 #-*-coding: utf-8; mode:python-*-
+from operator import truediv
 from classes.Bottle import *
 import copy
 
@@ -9,6 +10,13 @@ class State():
 
     def __len__(self):
         return len(self.bottles)
+
+    def __str__(self):
+        list_bottles = []
+        for bottle in self.bottles:
+            list_bottles.append(bottle.liquids)
+        str_list_bottles = str(list_bottles)
+        return str_list_bottles.replace(" ", "")
 
     def is_Possible_Action(self, originBottle, destBottle):
         if originBottle.current_amount == 0:
@@ -38,16 +46,8 @@ class State():
                     bottle_list = self.createCopy(initState.bottles)
         return successors_list
 
-    def isGoal(self):
-        inside_colours = []
-        for bottle in self.bottles:
-            if len(bottle.colours) == 1:
-                if bottle.getColourLast() in inside_colours:
-                    return False
-                else:
-                    inside_colours.append(bottle.getColourLast())
-            elif len(bottle.colours) == 0:
-                continue
-            else:
-                return False
-        return True       
+    def isGoal(self, heuristic):
+        if heuristic == 0.0:
+            return True
+        else:
+            return False     

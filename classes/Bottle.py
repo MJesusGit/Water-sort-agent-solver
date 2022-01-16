@@ -34,19 +34,19 @@ class Bottle():
         if(new_colour > -1 ):
             self.colours.append(new_colour)
         else:
-            print(f"ERROR: colour {new_colour} does not exist")
+            print(f"\nERROR: colour {new_colour} does not exist\n")
             sys.exit()
     
     def insert_liquid_import(self, new_liquid):
         if len(self.liquids)>0:
             if self.liquids[len(self.liquids)-1][0] == new_liquid[0]:
-                print("ERROR: two equal colours in a row.")
+                print("\nERROR: two equal colours in a row.\n")
                 sys.exit()
         self.liquids.append(new_liquid)
         self.insert_colour(new_liquid[0])
         self.current_amount += new_liquid[1]
         if self.current_amount > self.MAX_amount:
-            print("ERROR: more liquid amount than expected.")
+            print("\nERROR: more liquid amount than expected.\n")
             sys.exit()
 
     def insert_liquid(self, new_liquid):

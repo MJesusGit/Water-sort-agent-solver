@@ -23,7 +23,8 @@ def read_States_Txt(input, type_input):
             problem=Problem(str(problem_dict["id"]),str(problem_dict["bottleSize"]),State(line_to_bottles(str(problem_dict["initState"]),problem_dict["bottleSize"])))
             return problem
     except FileNotFoundError:
-        print("ERROR: READING FILE .json")
+        print("\nERROR: file not valid\n")
+        return None
 
 def line_to_bottles(line,MAX_amount=None):
     """Identify the bottles, liquids , colors and quantity"""
